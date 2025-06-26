@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple AR Placement</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #root {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+    }
+    .logo {
+      height: 6em;
+      padding: 1.5em;
+      will-change: filter;
+      transition: filter 300ms;
+    }
+    .logo:hover {
+      filter: drop-shadow(0 0 2em #646cffaa);
+    }
+    .logo.react:hover {
+      filter: drop-shadow(0 0 2em #61dafbaa);
+    }
+    @keyframes logo-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      a:nth-of-type(2) .logo {
+        animation: logo-spin infinite 20s linear;
+      }
+    }
+    .card {
+      padding: 2em;
+    }
+    .read-the-docs {
+      color: #888;
+    }
+    #object-selector button { margin: 0 8px; font-size: 22px; padding: 16px 28px; cursor: pointer; border-radius: 10px; border: none; }
+    #object-selector .selected { background: #2194ce !important; color: #fff !important; }
+    canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 100vw; max-width: 600px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+      <div id="object-selector" class="card" style="background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: center; width: 100%;">
+        <button id="btn-tree" onclick="setObjectType('tree')" style="background: #fbbf24; color: #222; font-weight: 600;">Tree</button>
+        <button id="btn-roof" onclick="setObjectType('roof')" style="background: #fbbf24; color: #222; font-weight: 600;">Roof</button>
+        <button id="btn-shade" onclick="setObjectType('shade')" style="background: #fbbf24; color: #222; font-weight: 600;">Shade</button>
+        <button id="remove-last" onclick="removeLastObject()" style="background:#e52e71; color:#fff; border:none; border-radius:6px; font-weight:600;">Remove Last</button>
+        <span id="object-count" style="color:#222; font-weight:bold;">Objects: 0</span>
+        <span id="placement-status" style="color:#2194ce; font-weight:600;">Status: Ready</span>
+      </div>
+      <button id="generate-report" style="font-size: 22px; padding: 16px 32px; border-radius: 10px; background: #2194ce; color: #fff; border: none; width: 100%; max-width: 400px; font-weight:600; box-shadow: 0 2px 8px rgba(33,148,206,0.10);">Generate Location Report</button>
+    </div>
+  </div>
+  <div id="report-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center;">
+    <div id="report-content" style="background:#fff; border-radius:16px; padding:32px; max-width:90vw; max-height:90vh; overflow:auto; margin:auto; position:relative; box-shadow: 0 8px 32px rgba(33,148,206,0.15);">
+      <button onclick="document.getElementById('report-modal').style.display='none'" style="position:absolute; top:16px; right:16px; font-size:24px; background:none; border:none; color:#e52e71;">&times;</button>
+      <button id="download-pdf" style="position:absolute; top:16px; left:16px; font-size:18px; background:#fbbf24; color:#222; border:none; border-radius:6px; padding:8px 16px; font-weight:600;">Download PDF</button>
+      <div id="report-body"></div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.137.5/build/three.min.js"></script>
+  <script src="libs/ARButton.js"></script>
+  <script src="libs/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html> 

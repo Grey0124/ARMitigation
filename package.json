@@ -1,0 +1,11 @@
+{
+  "name": "simple-webxr-ar-placement",
+  "version": "1.0.0",
+  "description": "Minimal AR object placement using Three.js and WebXR.",
+  "scripts": {
+    "start": "http-server -S -C localhost.pem -K localhost-key.pem"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+} 
