@@ -38,9 +38,77 @@
     .read-the-docs {
       color: #888;
     }
-    #object-selector button { margin: 0 8px; font-size: 22px; padding: 16px 28px; cursor: pointer; border-radius: 10px; border: none; }
+    #object-selector button, #object-selector select {
+      margin: 0 8px;
+      font-size: 24px;
+      padding: 20px 32px;
+      cursor: pointer;
+      border-radius: 12px;
+      border: none;
+      min-width: 120px;
+      min-height: 56px;
+      box-sizing: border-box;
+    }
     #object-selector .selected { background: #2194ce !important; color: #fff !important; }
+    #object-selector {
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+    #generate-report {
+      font-size: 24px;
+      padding: 20px 32px;
+      border-radius: 12px;
+      min-width: 220px;
+      min-height: 56px;
+      margin-top: 12px;
+    }
+    #zoom-controls button {
+      font-size: 36px !important;
+      padding: 16px 24px !important;
+      min-width: 64px;
+      min-height: 64px;
+    }
+    @media (max-width: 700px) {
+      #root > div {
+        max-width: 98vw !important;
+        padding: 0.5em !important;
+      }
+      #object-selector {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+      }
+      #object-selector button, #object-selector select {
+        width: 100%;
+        min-width: 0;
+        font-size: 20px;
+        padding: 16px 10px;
+      }
+      #generate-report {
+        width: 100%;
+        min-width: 0;
+        font-size: 20px;
+        padding: 16px 10px;
+      }
+      #zoom-controls {
+        right: 10px !important;
+        bottom: 10px !important;
+      }
+    }
     canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
+    /* Move ARButton closer to controls */
+    #ARButton {
+      position: absolute !important;
+      top: 110px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      z-index: 1100 !important;
+      font-size: 24px !important;
+      padding: 18px 36px !important;
+      border-radius: 12px !important;
+      min-width: 180px;
+      min-height: 56px;
+    }
   </style>
 </head>
 <body>
