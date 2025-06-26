@@ -84,13 +84,6 @@ window.generateMitigationReport = async function() {
     <p style="margin-top:16px; color:#888;">This report estimates the cooling effect of your interventions for urban planning and heat mitigation.</p>
   `;
   document.getElementById('report-body').innerHTML = html;
-
-  // Place ARButton below report generation button
-  const arBtn = ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] });
-  setTimeout(() => {
-    const placeholder = document.getElementById('arbutton-placeholder');
-    if (placeholder && arBtn) placeholder.appendChild(arBtn);
-  }, 0);
 };
 
 document.getElementById('generate-report').onclick = window.generateMitigationReport;
@@ -156,12 +149,14 @@ animate();
 function init() {
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 50);
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.xr.enabled = true;
   document.body.appendChild(renderer.domElement);
+
+  document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
 
   // Add light
   const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
@@ -173,8 +168,8 @@ function init() {
   controller.addEventListener('select', onSelect);
   scene.add(controller);
 
-  // Reticle for placement (make it much larger for long distance)
-  const geometry = new THREE.RingGeometry(0.3, 0.35, 64).rotateX(-Math.PI / 2); // Increased radius
+  // Reticle for placement (make it much larger)
+  const geometry = new THREE.RingGeometry(0.3, 0.35, 64).rotateX(-Math.PI / 2);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
   window.reticle = new THREE.Mesh(geometry, material);
   window.reticle.matrixAutoUpdate = false;
@@ -186,6 +181,32 @@ function init() {
   window.hitTestSource = null;
 
   renderer.xr.addEventListener('sessionstart', onSessionStart);
+
+  // Add zoom controls (mouse wheel or pinch)
+  window.addEventListener('wheel', function(e) {
+    if (renderer.xr.isPresenting) return; // don't zoom in AR mode
+    camera.fov += e.deltaY * 0.05;
+    camera.fov = Math.max(20, Math.min(100, camera.fov));
+    camera.updateProjectionMatrix();
+  });
+
+  let lastTouchDist = null;
+  window.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 2 && !renderer.xr.isPresenting) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (lastTouchDist) {
+        camera.fov += (lastTouchDist - dist) * 0.1;
+        camera.fov = Math.max(20, Math.min(100, camera.fov));
+        camera.updateProjectionMatrix();
+      }
+      lastTouchDist = dist;
+    }
+  });
+  window.addEventListener('touchend', function(e) {
+    if (e.touches.length < 2) lastTouchDist = null;
+  });
 }
 
 function onSessionStart() {
