@@ -84,6 +84,13 @@ window.generateMitigationReport = async function() {
     <p style="margin-top:16px; color:#888;">This report estimates the cooling effect of your interventions for urban planning and heat mitigation.</p>
   `;
   document.getElementById('report-body').innerHTML = html;
+
+  // Place ARButton below report generation button
+  const arBtn = ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] });
+  setTimeout(() => {
+    const placeholder = document.getElementById('arbutton-placeholder');
+    if (placeholder && arBtn) placeholder.appendChild(arBtn);
+  }, 0);
 };
 
 document.getElementById('generate-report').onclick = window.generateMitigationReport;
@@ -156,8 +163,6 @@ function init() {
   renderer.xr.enabled = true;
   document.body.appendChild(renderer.domElement);
 
-  document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
-
   // Add light
   const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
   light.position.set(0.5, 1, 0.25);
@@ -181,9 +186,6 @@ function init() {
   window.hitTestSource = null;
 
   renderer.xr.addEventListener('sessionstart', onSessionStart);
-
-  // Add zoom in/out UI for AR (optional, since pinch is not natively supported in WebXR)
-  addZoomUI();
 }
 
 function onSessionStart() {
@@ -322,28 +324,4 @@ function updateObjectCount() {
 
 function setPlacementStatus(msg) {
   document.getElementById('placement-status').textContent = 'Status: ' + msg;
-}
-
-// Add zoom in/out UI buttons for AR mode
-function addZoomUI() {
-  if (document.getElementById('zoom-controls')) return;
-  const zoomDiv = document.createElement('div');
-  zoomDiv.id = 'zoom-controls';
-  zoomDiv.style.position = 'absolute';
-  zoomDiv.style.bottom = '40px';
-  zoomDiv.style.right = '40px';
-  zoomDiv.style.zIndex = '2001';
-  zoomDiv.innerHTML = `
-    <button id="zoom-in" style="font-size:32px; padding:8px 16px; border-radius:50%; background:#2194ce; color:#fff; border:none; margin-bottom:8px;">+</button><br>
-    <button id="zoom-out" style="font-size:32px; padding:8px 16px; border-radius:50%; background:#2194ce; color:#fff; border:none;">-</button>
-  `;
-  document.body.appendChild(zoomDiv);
-  document.getElementById('zoom-in').onclick = function() {
-    camera.fov = Math.max(10, camera.fov - 5);
-    camera.updateProjectionMatrix();
-  };
-  document.getElementById('zoom-out').onclick = function() {
-    camera.fov = Math.min(120, camera.fov + 5);
-    camera.updateProjectionMatrix();
-  };
 } 

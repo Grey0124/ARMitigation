@@ -96,12 +96,12 @@
       }
     }
     canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
-    /* Move ARButton closer to controls */
+    /* Move ARButton below report generation and ensure no overlap */
     #ARButton {
-      position: absolute !important;
-      top: 110px !important;
-      left: 50% !important;
-      transform: translateX(-50%) !important;
+      position: static !important;
+      display: block !important;
+      margin: 0 auto !important;
+      margin-top: 0 !important;
       z-index: 1100 !important;
       font-size: 24px !important;
       padding: 18px 36px !important;
@@ -109,6 +109,7 @@
       min-width: 180px;
       min-height: 56px;
     }
+    #zoom-controls { display: none !important; }
   </style>
 </head>
 <body>
@@ -129,7 +130,8 @@
         <span id="object-count" style="color:#222; font-weight:bold;">Objects: 0</span>
         <span id="placement-status" style="color:#2194ce; font-weight:600;">Status: Ready</span>
       </div>
-      <button id="generate-report" style="font-size: 22px; padding: 16px 32px; border-radius: 10px; background: #2194ce; color: #fff; border: none; width: 100%; max-width: 400px; font-weight:600; box-shadow: 0 2px 8px rgba(33,148,206,0.10);">Generate Location Report</button>
+      <button id="generate-report" style="font-size: 24px; padding: 20px 32px; border-radius: 12px; min-width: 220px; min-height: 56px; margin-top: 12px;">Generate Location Report</button>
+      <div id="arbutton-placeholder" style="margin-top: 18px; width: 100%; display: flex; justify-content: center;"></div>
     </div>
   </div>
   <div id="report-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center;">
