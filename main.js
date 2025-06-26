@@ -2,25 +2,29 @@ let camera, scene, renderer;
 let controller;
 let placedObject = null;
 let selectedType = 'tree';
+let selectedTreeModel = 'quick_treeit_tree.glb';
+let selectedBuildingModel = 'low_poly_building_no_17_3d_model.glb';
 const glbPaths = {
-  tree: 'quick_treeit_tree.glb',
-  roof: 'wooden_sign_with_roof.glb',
-  shade: 'beach_umbrella_low_poly.glb'
+  tree: {
+    'quick_treeit_tree.glb': 'quick_treeit_tree.glb'
+  },
+  building: {
+    'low_poly_building_no_17_3d_model.glb': 'low_poly_building_no_17_3d_model.glb',
+    'brick_building_graffiti.glb': 'brick_building_graffiti.glb',
+    'old_building.glb': 'old_building.glb'
+  }
 };
 let placedObjects = [];
 
-// Example coefficients (customize as needed)
+// Updated coefficients: tree cools, building heats
 const coolingCoefficients = {
-  tree: 0.02,   // °C per m²
-  roof: 0.015,
-  shade: 0.01
+  tree: 0.02,      // °C per m² (cooling)
+  building: -0.03  // °C per m² (heating)
 };
 
-// Example: Assume each object has a default size (or add a size property to placedObjects)
 function computeCoolingEffect(objects) {
   let total = 0;
   for (const obj of objects) {
-    // If you have size, use it; else assume 10m² per object
     const size = obj.size || 10;
     total += (coolingCoefficients[obj.type] || 0) * size;
   }
@@ -130,6 +134,13 @@ function downloadReportAsPDF() {
 window.addEventListener('DOMContentLoaded', function() {
   const btn = document.getElementById('download-pdf');
   if (btn) btn.onclick = downloadReportAsPDF;
+  setObjectType(selectedType);
+  document.getElementById('tree-model-select').onchange = function(e) {
+    selectedTreeModel = e.target.value;
+  };
+  document.getElementById('building-model-select').onchange = function(e) {
+    selectedBuildingModel = e.target.value;
+  };
 });
 
 init();
@@ -180,8 +191,19 @@ function onSessionStart() {
 function onSelect() {
   if (window.reticle.visible) {
     setPlacementStatus('Placing...');
+    let modelPath = '';
+    if (selectedType === 'tree') {
+      modelPath = glbPaths.tree[selectedTreeModel];
+    } else if (selectedType === 'building') {
+      modelPath = glbPaths.building[selectedBuildingModel];
+    }
+    console.log('Selected type:', selectedType, 'Model:', selectedType === 'tree' ? selectedTreeModel : selectedBuildingModel, 'Path:', modelPath);
+    if (!modelPath) {
+      setPlacementStatus('Model not found!');
+      return;
+    }
     const loader = new THREE.GLTFLoader();
-    loader.load(glbPaths[selectedType], function(gltf) {
+    loader.load(modelPath, function(gltf) {
       const model = gltf.scene;
       model.position.setFromMatrixPosition(window.reticle.matrix);
       model.quaternion.setFromRotationMatrix(window.reticle.matrix);
@@ -195,7 +217,9 @@ function onSelect() {
             model,
             createdAt: new Date(),
             lat: pos.coords.latitude,
-            lon: pos.coords.longitude
+            lon: pos.coords.longitude,
+            size: 10, // You can add a UI for size if needed
+            modelName: selectedType === 'tree' ? selectedTreeModel : selectedBuildingModel
           });
           updateObjectCount();
           setPlacementStatus('Placed ' + selectedType);
@@ -203,7 +227,9 @@ function onSelect() {
           placedObjects.push({
             type: selectedType,
             model,
-            createdAt: new Date()
+            createdAt: new Date(),
+            size: 10,
+            modelName: selectedType === 'tree' ? selectedTreeModel : selectedBuildingModel
           });
           updateObjectCount();
           setPlacementStatus('Placed ' + selectedType);
@@ -212,7 +238,9 @@ function onSelect() {
         placedObjects.push({
           type: selectedType,
           model,
-          createdAt: new Date()
+          createdAt: new Date(),
+          size: 10,
+          modelName: selectedType === 'tree' ? selectedTreeModel : selectedBuildingModel
         });
         updateObjectCount();
         setPlacementStatus('Placed ' + selectedType);
@@ -265,11 +293,13 @@ function render(timestamp, frame) {
 
 window.setObjectType = function(type) {
   selectedType = type;
-  // Highlight selected button
   document.getElementById('btn-tree').classList.remove('selected');
-  document.getElementById('btn-roof').classList.remove('selected');
-  document.getElementById('btn-shade').classList.remove('selected');
-  document.getElementById('btn-' + type).classList.add('selected');
+  document.getElementById('btn-building').classList.remove('selected');
+  if (type === 'tree') {
+    document.getElementById('btn-tree').classList.add('selected');
+  } else if (type === 'building') {
+    document.getElementById('btn-building').classList.add('selected');
+  }
 };
 
 window.removeLastObject = function() {
@@ -289,9 +319,4 @@ function updateObjectCount() {
 
 function setPlacementStatus(msg) {
   document.getElementById('placement-status').textContent = 'Status: ' + msg;
-}
-
-// Set initial selected button
-window.addEventListener('DOMContentLoaded', function() {
-  setObjectType(selectedType);
-}); 
+} 

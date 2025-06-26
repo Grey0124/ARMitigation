@@ -45,11 +45,18 @@
 </head>
 <body>
   <div id="root">
-    <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 100vw; max-width: 600px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+    <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 100vw; max-width: 700px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
       <div id="object-selector" class="card" style="background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: center; width: 100%;">
         <button id="btn-tree" onclick="setObjectType('tree')" style="background: #fbbf24; color: #222; font-weight: 600;">Tree</button>
-        <button id="btn-roof" onclick="setObjectType('roof')" style="background: #fbbf24; color: #222; font-weight: 600;">Roof</button>
-        <button id="btn-shade" onclick="setObjectType('shade')" style="background: #fbbf24; color: #222; font-weight: 600;">Shade</button>
+        <select id="tree-model-select" style="font-size:18px; padding:8px 12px; border-radius:8px;">
+          <option value="quick_treeit_tree.glb">Quick TreeIt Tree</option>
+        </select>
+        <button id="btn-building" onclick="setObjectType('building')" style="background: #fbbf24; color: #222; font-weight: 600;">Building</button>
+        <select id="building-model-select" style="font-size:18px; padding:8px 12px; border-radius:8px;">
+          <option value="low_poly_building_no_17_3d_model.glb">Low Poly Building</option>
+          <option value="brick_building_graffiti.glb">Brick Building Graffiti</option>
+          <option value="old_building.glb">Old Building</option>
+        </select>
         <button id="remove-last" onclick="removeLastObject()" style="background:#e52e71; color:#fff; border:none; border-radius:6px; font-weight:600;">Remove Last</button>
         <span id="object-count" style="color:#222; font-weight:bold;">Objects: 0</span>
         <span id="placement-status" style="color:#2194ce; font-weight:600;">Status: Ready</span>
